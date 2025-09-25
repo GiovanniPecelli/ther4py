@@ -1,0 +1,28 @@
+PS C:\Users\giova\Documents\GIOVANNI\CODE\therapy> get-ChildItem -Directory -Recurse -Depth 0
+    Directory: C:\Users\giova\Documents\GIOVANNI\CODE\therapy
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d----          22/09/2025    16:48                dist
+d----          22/09/2025    16:38                node_modules
+d----          22/09/2025    10:22                public
+d----          22/09/2025    11:23                src
+PS C:\Users\giova\Documents\GIOVANNI\CODE\therapy> dir C:\Users\giova\Documents\GIOVANNI\CODE\therapy\src
+    Directory: C:\Users\giova\Documents\GIOVANNI\CODE\therapy\src
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d----          22/09/2025    10:22                assets
+-a---          22/09/2025    17:35          13700 App.jsx
+-a---          22/09/2025    17:41           8594 index.css
+-a---          22/09/2025    10:08            229 main.jsx
+
+questa è parte della struttura del mio progetto
+
+vorrei che che si sentissero i suoni o vibrasse il telefono quando si passa 
+da session a break e quando finisce il tempo totale, attualmente non lo fa 
+forse perche non suona se bloccato dal browser
+
+vorrei che sulla funzione statistic vengano salvate le impostazioni di ogni 
+volta che si inizia un tempo, e quanti cicli sono stati completati su quelli 
+previsti, potranno e dovranno poter essere modificate es eliminate, e magari 
+si prendano dati tipo durata media giorno data mettendoli in ordine su un 
+calendario
