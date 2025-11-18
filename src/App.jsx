@@ -151,7 +151,7 @@ const SettingsPanel = ({
           max={180}
           step={0.1}
           value={totalDuration}
-          onChange={(e) => setTotalDuration(Number(e.target.value))}
+          onChange={(e) => setTotalDuration(e.target.value === '' ? '' : Number(e.target.value))}
           disabled={isRunning}
         />
       </div>
@@ -164,7 +164,7 @@ const SettingsPanel = ({
           max={60}
           step={0.1}
           value={sessionTime}
-          onChange={(e) => setSessionTime(Number(e.target.value))}
+          onChange={(e) => setSessionTime(e.target.value === '' ? '' : Number(e.target.value))}
           disabled={isRunning}
         />
       </div>
@@ -177,7 +177,7 @@ const SettingsPanel = ({
           max={30}
           step={0.1}
           value={restTime}
-          onChange={(e) => setRestTime(Number(e.target.value))}
+          onChange={(e) => setRestTime(e.target.value === '' ? '' : Number(e.target.value))}
           disabled={isRunning}
         />
       </div>
@@ -286,23 +286,29 @@ const PomodoroTimerPage = ({ setCurrentView }) => {
   }, []);
 
   // Salva statistiche
-  const saveSession = useCallback(() => {
+  const saveSession = useCallback((completed = true, currentTimeRemaining = 0) => {
+    // Non salvare se la durata attiva è 0 (es. reset senza mai avviare)
+    if (activeTotalDuration <= 0) return;
+
+    const spentDurationInSeconds = (activeTotalDuration * 60) - currentTimeRemaining;
+    const spentDurationInMinutes = spentDurationInSeconds / 60;
+
     const sessionData = {
       id: Date.now(),
       date: new Date().toISOString().split('T')[0],
       startTime: new Date().toLocaleTimeString(),
-      totalDuration: activeTotalDuration,
+      totalDuration: parseFloat(spentDurationInMinutes.toFixed(2)), // Arrotonda a 2 decimali
       sessionTime: activeSessionTime,
       restTime: activeRestTime,
       cyclesCompleted,
       cyclesPlanned: Math.floor((activeTotalDuration * 60) / ((activeSessionTime + activeRestTime) * 60)),
-      completed: true
+      completed
     };
 
     const stats = JSON.parse(localStorage.getItem('pomodoroStats') || '[]');
     stats.push(sessionData);
     localStorage.setItem('pomodoroStats', JSON.stringify(stats));
-  }, [activeTotalDuration, activeSessionTime, activeRestTime, cyclesCompleted]);
+}, [activeTotalDuration, activeSessionTime, activeRestTime, cyclesCompleted]);
 
   // Timer principale
   useEffect(() => {
@@ -313,7 +319,7 @@ const PomodoroTimerPage = ({ setCurrentView }) => {
         if (prevTotal <= 1) {
           clearInterval(intervalRef.current);
           playAlarm();
-          saveSession();
+          saveSession(true, 0);
           setIsRunning(false);
           setTimeLeft(0);
           setHasStarted(false); // <-- aggiungi qui
@@ -365,6 +371,9 @@ const PomodoroTimerPage = ({ setCurrentView }) => {
   const pauseTimer = () => setIsRunning(false);
 
   const resetTimer = () => {
+    if (hasStarted) {
+      saveSession(false, totalTimeRemaining);
+    }
     setIsRunning(false);
     setHasStarted(false);
     setTimeLeft(0);
@@ -504,8 +513,8 @@ const SessionCard = ({ session, onDelete, onEdit }) => {
         </div>
       ) : (
         <div className="session-details">
-          <p><strong>Total:</strong> {session.totalDuration}min</p>
-          <p><strong>Work:</strong> {session.sessionTime}min | <strong>Break:</strong> {session.restTime}min</p>
+          <p><strong>Total:</strong> {session.totalDuration.toFixed(2)}min</p>
+          <p><strong>Work:</strong> {session.sessionTime.toFixed(2)}min | <strong>Break:</strong> {session.restTime.toFixed(2)}min</p>
           <p><strong>Cycles:</strong> {session.cyclesCompleted}/{session.cyclesPlanned}</p>
           
           <div className="session-actions">
@@ -517,6 +526,8 @@ const SessionCard = ({ session, onDelete, onEdit }) => {
     </div>
   );
 };
+
+import Calendar from './components/Calendar';
 
 // ==================== STATISTICS PAGE ====================
 const StatisticsPage = ({ setCurrentView }) => {
@@ -555,15 +566,18 @@ const StatisticsPage = ({ setCurrentView }) => {
   
   const getTotalMinutesToday = () => {
     const today = new Date().toISOString().split('T')[0];
-    return getStatsForDate(today).reduce((total, session) => total + session.totalDuration, 0);
+    const total = getStatsForDate(today).reduce((total, session) => total + session.totalDuration, 0);
+    return total.toFixed(2);
   };
 
   const getAverageDaily = () => {
     const dates = [...new Set(stats.map(s => s.date))];
     if (dates.length === 0) return 0;
     const totalMinutes = stats.reduce((sum, s) => sum + s.totalDuration, 0);
-    return Math.round(totalMinutes / dates.length);
+    return (totalMinutes / dates.length).toFixed(2);
   };
+
+  const sessionDates = [...new Set(stats.map(s => s.date))];
 
   return (
     <div className="stats-page">
@@ -589,11 +603,10 @@ const StatisticsPage = ({ setCurrentView }) => {
 
         <div className="calendar-section">
           <h2>Calendar View</h2>
-          <input
-            type="date"
-            value={selectedDate}
-            onChange={(e) => setSelectedDate(e.target.value)}
-            className="date-picker"
+          <Calendar 
+            sessionDates={sessionDates}
+            selectedDate={selectedDate}
+            onDateClick={setSelectedDate}
           />
           
           <div className="date-sessions">

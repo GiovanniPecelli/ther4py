@@ -239,12 +239,30 @@ body {
 .stat-card h3 { font-size:0.9rem; color:#6b7280; margin-bottom:0.5rem; font-weight:500; }
 .stat-card p { font-size:1.5rem; font-weight:700; color:#1f2937; }
 
-/* ==================== CALENDAR ==================== */
+/* ==================== CALENDAR SECTION ==================== */
 .calendar-section { background:white; padding:1.5rem; border-radius:1rem; box-shadow:0 4px 12px rgba(0,0,0,0.1); margin-bottom:2rem; }
 .calendar-section h2 { font-size:1.25rem; font-weight:700; color:#1f2937; margin-bottom:1rem; }
 .date-picker { width:100%; max-width:200px; padding:0.75rem; border:2px solid #e5e7eb; border-radius:0.5rem; font-size:1rem; margin-bottom:1rem; }
 .date-picker:focus { border-color:#6366f1; box-shadow:0 0 0 3px rgba(99,102,241,0.1); }
 .date-sessions { display:flex; flex-direction:column; gap:1rem; }
+
+/* ==================== CALENDAR COMPONENT ==================== */
+.calendar { max-width: 100%; margin: 0 auto; }
+.calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+.calendar-header h2 { font-size: 1.2rem; font-weight: 600; }
+.calendar-header button { background: transparent; border: none; cursor: pointer; padding: 0.5rem; border-radius: 50%; }
+.calendar-header button:hover { background: #f3f4f6; }
+.calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.5rem; }
+.calendar-day-name { text-align: center; font-weight: 600; color: #6b7280; font-size: 0.8rem; }
+.calendar-day { display: flex; flex-direction: column; justify-content: center; align-items: center; height: 40px; cursor: pointer; border-radius: 50%; position: relative; transition: background-color 0.2s; }
+.calendar-day.other-month { color: #d1d5db; }
+.calendar-day:hover { background-color: #f3f4f6; }
+.calendar-day.today span { font-weight: bold; color: #4f46e5; }
+.calendar-day.selected { background-color: #4f46e5; color: white; }
+.calendar-day.selected span { color: white; }
+.session-indicator { width: 5px; height: 5px; border-radius: 50%; background-color: #ef4444; position: absolute; bottom: 5px; }
+.calendar-day.selected .session-indicator { background-color: white; }
+
 
 /* ==================== ALL SESSIONS ==================== */
 .all-sessions { background:white; padding:1.5rem; border-radius:1rem; box-shadow:0 4px 12px rgba(0,0,0,0.1); }
@@ -266,7 +284,8 @@ body {
 .delete-btn:hover { background:#dc2626; }
 .save-btn { background:#22c55e; color:white; padding:0.5rem 1rem; border-radius:0.5rem; font-size:0.8rem; font-weight:500; }
 .save-btn:hover { background:#16a34a; }
-.cancel-btn { background:#6b7280; color:white; padding:0.5rem 1rem; border-radius:0.5rem; font-size:0.8rem; font-weight:500; }
+.cancel-btn { background:#6b7280; color:white; padding:0.5rem 1rem; border-radius:0.5rem; font-s
+ize:0.8rem; font-weight:500; }
 .cancel-btn:hover { background:#4b5563; }
 .edit-form { display:flex; flex-direction:column; gap:0.75rem; }
 .edit-form input { padding:0.5rem; border:1px solid #d1d5db; border-radius:0.5rem; font-size:0.9rem; }
